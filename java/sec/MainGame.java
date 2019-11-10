@@ -1,0 +1,42 @@
+package sec;
+public class MainGame{
+	private boolean[][] map;
+	public MainGame(boolean[][] inmap){
+		map=inmap;
+	}
+	public boolean cntrol(int x1,int y1,int x2,int y2){
+		if(x1==x2){
+			if(y1<=y2){
+				for(int i=y1;i<=y2;i++){if(map[x1][i]==false)return false;}
+				for(int i=y1;i<=y2;i++){map[x1][i]=false;}
+				return true;
+			}
+			if(y1>=y2){
+				for(int i=y2;i<=y1;i++){if(map[x1][i]==false)return false;}
+				for(int i=y2;i<=y1;i++){map[x1][i]=false;}
+				return true;
+			}
+		}
+		if(y1==y2){
+			if(x1<=x2){
+				for(int i=x1;i<=x2;i++){if(map[i][y1]==false)return false;}
+				for(int i=x1;i<=x2;i++){map[i][y1]=false;}
+				return true;
+			}
+			if(x1>=x2){
+				for(int i=x2;i<=x1;i++){if(map[i][y1]==false)return false;}
+				for(int i=x2;i<=x1;i++){map[i][y1]=false;}
+				return true;
+			}
+		}
+		return false;
+	}
+	public boolean isFinish(){
+		for(int x=0;x<map.length;x++){
+			for(int y=0;y<map[0].length;y++){
+				if(map[x][y]==true)return false;
+			}
+		}
+		return true;
+	}
+}
