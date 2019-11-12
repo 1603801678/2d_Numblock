@@ -5,6 +5,8 @@ public class MainGame{
 		map=inmap;
 	}
 	public boolean cntrol(int x1,int y1,int x2,int y2){
+		if(x1>=map.length|x2>=map.length)return false;
+		if(y1>=map[0].length|y2>=map[0].length)return false;
 		if(x1==x2){
 			if(y1<=y2){
 				for(int i=y1;i<=y2;i++){if(map[x1][i]==false)return false;}
