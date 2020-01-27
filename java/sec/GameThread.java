@@ -2,6 +2,7 @@ package sec;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.io.File;
 public class GameThread extends Thread{
 	public GameThread(){}
 	public void run(){
@@ -24,14 +25,21 @@ public class GameThread extends Thread{
 		thigh.setSize(10,10);
 		left.add(thigh);
 		
+		
 		left.add(new JLabel("P1:"));
-		left.add(new JLabel("Player"));
+		Choice p1=choiceCreat();
+		left.add(p1);
+		
 		left.add(new JLabel("P2:"));
-		left.add(new JLabel("Rand"));
+		Choice p2=choiceCreat();
+		left.add(p2);
+		
 		left.add(new JLabel("Creating:"));
+		Choice cea=creatingCreat();
+		left.add(cea);
 		
 		Button a=new Button("START");
-		Run run=new Run(twide,thigh,init);
+		Run run=new Run(twide,thigh,p1,p2,cea,init);
 		a.addActionListener(run);
 		left.add(a);
 		
@@ -41,6 +49,27 @@ public class GameThread extends Thread{
 		left.add(e);
 		
 		init.setVisible(true);
+	}
+	private Choice creatingCreat(){
+		File parent=new File("./creating");
+		File[] test=parent.listFiles();
+		Choice choi= new Choice();
+		for(File ff:test){
+			String temp=ff.getName();
+			if(temp.matches(".+class"))choi.add(temp.replace(".class",""));
+		}
+		return choi;
+	}
+	private Choice choiceCreat(){
+		File parent=new File("./mods");
+		File[] test=parent.listFiles();
+		Choice choi= new Choice();
+		choi.add("Player");
+		for(File ff:test){
+			String temp=ff.getName();
+			if(temp.matches(".+class"))choi.add(temp.replace(".class",""));
+		}
+		return choi;
 	}
 	class Act implements ActionListener{
 		JFrame ex;
@@ -52,22 +81,28 @@ public class GameThread extends Thread{
 		}
 	}
 	class Run implements ActionListener{
-		JTextField wide;
-		JTextField high;
+		JTextField twide;
+		JTextField thigh;
 		JFrame ex;
-		public Run(JTextField twide,JTextField thigh,JFrame t){
-			wide=twide;
-			high=thigh;
+		Choice p1;
+		Choice p2;
+		Choice cea;
+		public Run(JTextField twide,JTextField thigh,Choice p1,Choice p2,Choice cea,JFrame t){
+			this.twide=twide;
+			this.thigh=thigh;
 			ex=t;
+			this.p1=p1;
+			this.p2=p2;
+			this.cea=cea;
 		}
 		public void actionPerformed(ActionEvent e){
-			int w=Integer.valueOf(wide.getText()).intValue();
-			int h=Integer.valueOf(high.getText()).intValue();
-			if(w<=0)return;
-			if(w>=60)return;
-			if(h<=0)return;
-			if(h>=60)return;
-			new ControlThread(w,h).start();
+			int wide=Integer.valueOf(twide.getText()).intValue();
+			int high=Integer.valueOf(thigh.getText()).intValue();
+			if(wide<=0)return;
+			if(wide>=60)return;
+			if(high<=0)return;
+			if(high>=60)return;
+			new ControlThread(wide,high,p1.getSelectedItem(),p2.getSelectedItem(),cea.getSelectedItem()).start();
 			ex.setVisible(false);
 		}
 	}

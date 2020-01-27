@@ -12,13 +12,11 @@ public class MainGame{
 			if(y1<=y2){
 				for(int i=y1;i<=y2;i++){if(map[x1][i]==false)return false;}
 				for(int i=y1;i<=y2;i++){map[x1][i]=false;}
-				System.out.println("ww");
 				return true;
 			}
 			if(y1>=y2){
 				for(int i=y2;i<=y1;i++){if(map[x1][i]==false)return false;}
 				for(int i=y2;i<=y1;i++){map[x1][i]=false;}
-				System.out.println("ww");
 				return true;
 			}
 		}

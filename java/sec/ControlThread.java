@@ -2,15 +2,19 @@ package sec;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.Random;
+import java.lang.reflect.Method;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 public class ControlThread extends Thread{
 	final int rim=20;
 	boolean flag=true;
 	int wide;
 	int high;
 	String creating="Randem";
-	String P1="Player";
-	String P2="Player";
+	String P1;
+	String P2;
+	Method p1;
+	Method p2;
 	MainGame game;
 	int mx=-1;
 	int my=-1;
@@ -21,17 +25,32 @@ public class ControlThread extends Thread{
 	boolean isclick=false;
 	NStage nstage;
 	boolean isp1=true;
-	public ControlThread(int wide,int high){
+	public ControlThread(int wide,int high,String P1,String P2,String cea){
 		this.wide=wide;
 		this.high=high;
-		boolean[][] inm=new boolean[high][wide];
-		Random rand=new Random();
-		for(int h=0;h<high;h++){
-			for(int w=0;w<wide;w++){
-				inm[h][w]=rand.nextBoolean();
+		this.P1=P1;
+		this.P2=P2;
+		try{
+			Method creatt=Class.forName("creating."+cea).getDeclaredMethod("cea",int.class,int.class);
+			Object reci=creatt.invoke(null,wide,high);
+			boolean[][] inm=new boolean[high][wide];
+			for(int h=0;h<high;h++){
+				for(int w=0;w<wide;w++){
+					inm[h][w]=Array.getBoolean(Array.get(reci,h),w);
+				}
 			}
+			game=new MainGame(inm);
 		}
-		game=new MainGame(inm);
+		catch(IllegalAccessException e){System.err.print(e);}
+		catch(InvocationTargetException e){System.err.print(e);}
+		catch(ClassNotFoundException e){System.err.print(e);}
+		catch(NoSuchMethodException e){System.err.print(e);}
+		
+		try{
+			if(P1!="Player")p1=Class.forName("mods."+P1).getDeclaredMethod("control",boolean[][].class);
+			if(P2!="Player")p2=Class.forName("mods."+P2).getDeclaredMethod("control",boolean[][].class);}
+		catch(ClassNotFoundException e){System.err.print(e);}
+		catch(NoSuchMethodException e){System.err.print(e);}
 	}
 	public void run(){
 		JFrame main=new JFrame("2d_Numblock");
@@ -59,12 +78,14 @@ public class ControlThread extends Thread{
 		
 		main.setVisible(true);
 		while(!game.isFinish()){
-			playerControl();
+			if(P1=="Player"){playerControl();}
+			else {autoControl(p1);}
 			isp1=false;
 			sign.setText("  p1:\n"+P1+"\n>>p2:\n"+P2);
 			nstage.repaint();
-			if(game.isFinish())break;
-			playerControl();
+			if(game.isFinish()){break;}
+			if(P2=="Player"){playerControl();}
+			else {autoControl(p2);}
 			isp1=true;
 			sign.setText(">>p1:\n"+P1+"\n  p2:\n"+P2);
 			nstage.repaint();
@@ -72,7 +93,7 @@ public class ControlThread extends Thread{
 			//System.out.println(10000);
 			//try{sleep(10000);}catch(InterruptedException e){}
 		}
-		System.out.println(isp1?"P1":"P2"+"win");
+		System.out.println((isp1?"P1":"P2")+"win");
 		nstage.removeMouseMotionListener(mmove);
 		nstage.removeMouseListener(mclick);
 		main.setVisible(false);
@@ -83,6 +104,17 @@ public class ControlThread extends Thread{
 			while(waiting){}
 			waiting=true;
 		}while(!game.control(dx0/rim,dy0/rim,dx1/rim,dy1/rim));
+	}
+	private void autoControl(Method au){
+		try{
+			Object reci=au.invoke(null,new Object[][]{game.getMap()});
+			if(game.control(Array.getInt(reci,0),Array.getInt(reci,1),Array.getInt(reci,2),Array.getInt(reci,3))==false){
+				System.err.println("your mode have something wrong");
+				System.exit(0);
+			}
+		}
+		catch(IllegalAccessException e){System.err.print(e);}
+		catch(InvocationTargetException e){System.err.print(e);}
 	}
 	public int[] getRed(){
 		if(dx0>=0&dx0<=rim*wide&dy0>=0&dy0<=rim*high&dx1>=0&dx1<=rim*wide&dy1>=0&dy1<=rim*high){
