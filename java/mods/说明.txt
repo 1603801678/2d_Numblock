@@ -1,0 +1,8 @@
+格式：	
+	所属包：
+		package mods;
+	必含的方法：
+		public static int[] control(boolean[][] map){}
+		传入参数map是目前局势true为剩余的格子false为已消除的格子
+		返回的int[0~3]分别为下一步操作：
+			初始y，初始x，终点y，终点x

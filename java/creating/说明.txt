@@ -1,0 +1,6 @@
+格式：	
+	所属包：
+		package creating;
+	必含的方法：
+		public static boolean[][] cea(int wide,int high){}
+		wide为宽high为高返回生成的地图
